@@ -32,3 +32,18 @@ Barre de recherche qui lance la requête sans avoir besoin de cliquer sur un bou
 Pour éviter de spam l'api à chaque fois que l'utilisateur appuie sur une touche, j'ai demandé à l'ia de me mettre une temporisation si c'était possible. La requête ne part que si l'utilisateur arrête d'écrire pendant ce court laps de temps.
 
 La recherche se déclenche qu'à partir de 3 caractères pour éviter les résultats trop nombreux et non pertinents.
+
+## Exercice 3 :
+
+**Backend :**
+Pour le filtrage, j'ai ajouté un paramètre optionnel setCode aux routes de listing et de recherche.
+
+Méthode spécifique getAllSetCodes en utilisant DISTINCT pour récupérer que les codes d'extension uniques présents en base = plus performant.
+
+**Frontend :**
+
+J'ai ajouté un menu déroulant (`<select>`) sur les pages de recherche et de listing.
+
+Dès qu'on change la valeur du select, une nouvelle requête est automatiquement lancée vers l'api.
+
+Le filtre se combine avec la recherche textuelle.

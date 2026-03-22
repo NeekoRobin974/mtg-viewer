@@ -1,5 +1,9 @@
-export async function fetchAllCards() {
-    const response = await fetch('/api/card/all');
+export async function fetchAllCards(setCode = null) {
+    let url = '/api/card/all';
+    if (setCode) {
+        url += `?setCode=${setCode}`;
+    }
+    const response = await fetch(url);
     if (!response.ok) throw new Error('Failed to fetch cards');
     const result = await response.json();
     return result;
@@ -14,9 +18,19 @@ export async function fetchCard(uuid) {
     return card;
 }
 
-export async function searchCards(name) {
+export async function searchCards(name, setCode = null) {
     if (name.length < 3) return [];
-    const response = await fetch(`/api/card/search?name=${name}`);
+    let url = `/api/card/search?name=${name}`;
+    if (setCode) {
+        url += `&setCode=${setCode}`;
+    }
+    const response = await fetch(url);
     if (!response.ok) throw new Error('Failed to search cards');
+    return response.json();
+}
+
+export async function fetchSets() {
+    const response = await fetch('/api/card/sets');
+    if (!response.ok) throw new Error('Failed to fetch sets');
     return response.json();
 }

@@ -22,26 +22,42 @@ class ApiCardController extends AbstractController
     ) {
     }
     #[Route('/all', name: 'List all cards', methods: ['GET'])]
-    #[OA\Put(description: 'Return all cards in the database')]
+    #[OA\Parameter(name: 'setCode', description: 'Filter by set code', in: 'query', required: false, schema: new OA\Schema(type: 'string'))]
+    #[OA\Get(description: 'Return all cards in the database')]
     #[OA\Response(response: 200, description: 'List all cards')]
-    public function cardAll(): Response
-    {
-        $cards = $this->entityManager->getRepository(Card::class)->findAll();
+    public function cardAll(Request $request): Response {
+        $setCode = $request->query->get('setCode');
+        if ($setCode) {
+            $cards = $this->entityManager->getRepository(Card::class)->findBy(['setCode' => $setCode]);
+        } else {
+            $cards = $this->entityManager->getRepository(Card::class)->findAll();
+        }
         return $this->json($cards);
     }
 
     #[Route('/search', name: 'Search cards', methods: ['GET'])]
     #[OA\Parameter(name: 'name', description: 'Name of the card to search', in: 'query', required: true, schema: new OA\Schema(type: 'string'))]
+    #[OA\Parameter(name: 'setCode', description: 'Filter by set code', in: 'query', required: false, schema: new OA\Schema(type: 'string'))]
     #[OA\Get(description: 'Search cards by name')]
     #[OA\Response(response: 200, description: 'List of cards matching the search')]
-    public function search(Request $request): Response{
+    public function search(Request $request): Response {
         $name = $request->query->get('name');
+        $setCode = $request->query->get('setCode');
+
         if (!$name || strlen($name) < 3) {
             return $this->json([], 200);
         }
         
-        $cards = $this->entityManager->getRepository(Card::class)->searchByName($name);
+        $cards = $this->entityManager->getRepository(Card::class)->searchByName($name, $setCode);
         return $this->json($cards);
+    }
+
+    #[Route('/sets', name: 'List all set codes', methods: ['GET'])]
+    #[OA\Get(description: 'Return all available set codes')]
+    #[OA\Response(response: 200, description: 'List of set codes')]
+    public function listSets(): Response {
+        $sets = $this->entityManager->getRepository(Card::class)->getAllSetCodes();
+        return $this->json($sets);
     }
 
     #[Route('/{uuid}', name: 'Show card', methods: ['GET'])]
