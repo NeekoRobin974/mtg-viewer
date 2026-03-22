@@ -1,3 +1,9 @@
+## Pour test
+
+npm run dev
+
+http://localhost:3000/build/
+
 ## Exercice 0
 
 **Pb rencontré :**
