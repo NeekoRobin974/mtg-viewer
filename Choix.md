@@ -16,3 +16,19 @@ J'ai utilisé le service LoggerInterface standard de Symfony injecté dans la co
 
 **Pour l'API :**
 J'ai créé un Event Listener nommé ApiLogListener. Il intercepte toutes les requêtes entrantes de l'application. Si l'url commence par /api, il enregistre automatiquement la méthode http et le chemin.
+
+## Exercice 2
+
+**Backend :**
+
+Méthode searchByName dans le CardRepository. Limite de 20 résultats comme demandé.
+
+/!\ à mettre la route /api/card/search avant la route/api/card/{uuid} dans le contrôleur, sinon, Symfony interprétait le mot "search" comme étant un paramètre {uuid} et essayait de trouver une carte nommée "search", ce qui renvoyait une 404.
+
+**Frontend :**
+
+Barre de recherche qui lance la requête sans avoir besoin de cliquer sur un bouton.
+
+Pour éviter de spam l'api à chaque fois que l'utilisateur appuie sur une touche, j'ai demandé à l'ia de me mettre une temporisation si c'était possible. La requête ne part que si l'utilisateur arrête d'écrire pendant ce court laps de temps.
+
+La recherche se déclenche qu'à partir de 3 caractères pour éviter les résultats trop nombreux et non pertinents.

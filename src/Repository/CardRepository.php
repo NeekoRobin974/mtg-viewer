@@ -32,4 +32,13 @@ class CardRepository extends ServiceEntityRepository
         ;
         return array_column($result, 'uuid');
     }
+
+    public function searchByName(string $name, int $limit = 20): array{
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.name LIKE :name')
+            ->setParameter('name', '%' . $name . '%')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 }

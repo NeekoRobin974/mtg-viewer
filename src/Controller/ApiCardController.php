@@ -7,6 +7,7 @@ use App\Entity\Card;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use OpenApi\Attributes as OA;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,6 +27,20 @@ class ApiCardController extends AbstractController
     public function cardAll(): Response
     {
         $cards = $this->entityManager->getRepository(Card::class)->findAll();
+        return $this->json($cards);
+    }
+
+    #[Route('/search', name: 'Search cards', methods: ['GET'])]
+    #[OA\Parameter(name: 'name', description: 'Name of the card to search', in: 'query', required: true, schema: new OA\Schema(type: 'string'))]
+    #[OA\Get(description: 'Search cards by name')]
+    #[OA\Response(response: 200, description: 'List of cards matching the search')]
+    public function search(Request $request): Response{
+        $name = $request->query->get('name');
+        if (!$name || strlen($name) < 3) {
+            return $this->json([], 200);
+        }
+        
+        $cards = $this->entityManager->getRepository(Card::class)->searchByName($name);
         return $this->json($cards);
     }
 
