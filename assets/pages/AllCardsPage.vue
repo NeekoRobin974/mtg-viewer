@@ -5,12 +5,16 @@ import { fetchAllCards, fetchSets } from '../services/cardService';
 const cards = ref([]);
 const sets = ref([]);
 const selectedSet = ref('');
+const page = ref(1);
+const totalPages = ref(1);
 const loadingCards = ref(true);
 
 async function loadCards() {
     loadingCards.value = true;
     try {
-        cards.value = await fetchAllCards(selectedSet.value);
+        const result = await fetchAllCards(selectedSet.value, page.value);
+        cards.value = result.data;
+        totalPages.value = result.meta.totalPages;
     } catch (e) {
         console.error(e);
     } finally {
@@ -27,6 +31,14 @@ async function loadSets() {
 }
 
 watch(selectedSet, () => {
+    if (page.value === 1) {
+        loadCards();
+    } else {
+        page.value = 1;
+    }
+});
+
+watch(page, () => {
     loadCards();
 });
 
@@ -46,6 +58,12 @@ onMounted(() => {
                 <option value="">Tous les sets</option>
                 <option v-for="set in sets" :key="set" :value="set">{{ set }}</option>
             </select>
+        </div>
+
+        <div class="pagination">
+            <button type="button" :disabled="page <= 1" @click="page--">Précédent</button>
+            <span>Page {{ page }} / {{ totalPages }}</span>
+            <button type="button" :disabled="page >= totalPages" @click="page++">Suivant</button>
         </div>
     </div>
     <div class="card-list">

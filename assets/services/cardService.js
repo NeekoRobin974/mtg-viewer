@@ -1,7 +1,7 @@
-export async function fetchAllCards(setCode = null) {
-    let url = '/api/card/all';
+export async function fetchAllCards(setCode = null, page = 1) {
+    let url = `/api/card/all?page=${page}`;
     if (setCode) {
-        url += `?setCode=${setCode}`;
+        url += `&setCode=${setCode}`;
     }
     const response = await fetch(url);
     if (!response.ok) throw new Error('Failed to fetch cards');

@@ -22,17 +22,33 @@ class ApiCardController extends AbstractController
     ) {
     }
     #[Route('/all', name: 'List all cards', methods: ['GET'])]
+    #[OA\Parameter(name: 'page', description: 'Page number', in: 'query', required: false, schema: new OA\Schema(type: 'integer', default: 1))]
     #[OA\Parameter(name: 'setCode', description: 'Filter by set code', in: 'query', required: false, schema: new OA\Schema(type: 'string'))]
-    #[OA\Get(description: 'Return all cards in the database')]
-    #[OA\Response(response: 200, description: 'List all cards')]
+    #[OA\Get(description: 'Return a paginated list of cards')]
+    #[OA\Response(response: 200, description: 'List of cards with pagination info')]
     public function cardAll(Request $request): Response {
+        $page = $request->query->getInt('page', 1);
+        $limit = 100;
         $setCode = $request->query->get('setCode');
+        
+        $criteria = [];
         if ($setCode) {
-            $cards = $this->entityManager->getRepository(Card::class)->findBy(['setCode' => $setCode]);
-        } else {
-            $cards = $this->entityManager->getRepository(Card::class)->findAll();
+            $criteria['setCode'] = $setCode;
         }
-        return $this->json($cards);
+
+        $repository = $this->entityManager->getRepository(Card::class);
+        $total = $repository->count($criteria);
+        $cards = $repository->findBy($criteria, ['name' => 'ASC'], $limit, ($page - 1) * $limit);
+
+        return $this->json([
+            'data' => $cards,
+            'meta' => [
+                'total' => $total,
+                'page' => $page,
+                'limit' => $limit,
+                'totalPages' => ceil($total / $limit),
+            ]
+        ]);
     }
 
     #[Route('/search', name: 'Search cards', methods: ['GET'])]

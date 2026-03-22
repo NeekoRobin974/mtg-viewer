@@ -47,3 +47,15 @@ J'ai ajouté un menu déroulant (`<select>`) sur les pages de recherche et de li
 Dès qu'on change la valeur du select, une nouvelle requête est automatiquement lancée vers l'api.
 
 Le filtre se combine avec la recherche textuelle.
+
+## Exercice 4 :
+
+**Backend :**
+
+On renvoie maintenant un objet { data: [...], meta: { total, page, ... } }. Le front connaît le nombre total de pages disponibles.
+
+**Frontend :**
+
+Boutons Précédent/Suivant.
+
+Si il y a un changement de filtre, on remet à la page 1 pour éviter de se retrouver sur une page vide.
